@@ -22,6 +22,7 @@ var lob;
 var ig;
 var Y;
 var request;
+var Eventbright
 
 /**
  * GET /api
@@ -212,6 +213,64 @@ exports.getNewYorkTimes = function(req, res, next) {
     });
   });
 };
+
+
+/**
+ * EVENT BRIGHT
+ */
+exports.getEventBright = function(req, res, next) {
+  request = require('request');
+
+  var query = {
+    'location.address': 'Boston',
+    'sort_by':'best',
+    'token': process.env.EVENT_BRIGHT_KEY
+  };
+
+  request.get({ url: 'https://www.eventbriteapi.com/v3/events/search', qs: query }, function(err, request, body) {
+    if (request.statusCode === 403) {
+      return next(new Error('BAD API CALL'));
+    }
+    var ret = JSON.parse(body);
+    res.render('api/eventb', {
+      my_title: 'Event Bright API',
+      events: ret.events
+    });
+  });
+};
+
+exports.postEventBright = function(req, res) {
+  req.assert('name', 'Name cannot be blank').notEmpty();
+
+
+  var errors = req.validationErrors();
+
+  if (errors) {
+    req.flash('errors', errors);
+    res.render('account/signup', {
+      title: 'Create Account'
+    });
+    return res;
+  }
+
+  var name = req.body.name;
+  var query = {
+    'location.address': name,
+    'sort_by':'best',
+    'token': process.env.EVENT_BRIGHT_KEY
+  };
+  request.get({ url: 'https://www.eventbriteapi.com/v3/events/search', qs: query }, function(err, request, body) {
+    if (request.statusCode === 403) {
+      return next(new Error('BAD API CALL'));
+    }
+    var ret = JSON.parse(body);
+    req.flash('success', {msg: 'I have recieved the query!'});
+    res.render('api/eventb', {
+      my_title: 'Event Bright API',
+      events: ret.events
+    });
+  })
+}
 
 /**
  * GET /api/lastfm

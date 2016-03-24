@@ -1,0 +1,37 @@
+//
+   Created by fakem on 3/22/16.
+extends ../layout
+
+block content
+    .page-header
+        h2
+            i.fa.fa-building-o
+                | #{my_title}
+
+        h3 Search events in boston
+
+        form.form-horizontal(method='POST')
+            input(type='hidden', name='_csrf', value='')
+            ng-model("name")
+            .form-group
+                label(class='col-sm-2 control-label', for='name') Location
+                .col-sm-8
+                    input.form-control(type='text', name='name', id='name', autofocus=true)
+            .form-group
+                .col-sm-offset-2.col-sm-8
+                    button.btn.btn-primary(type='Search')
+                        | Search
+
+    table.table.table-striped.table-bordered
+        thead
+
+            tr
+                th Name
+                th start
+                th end
+        tbody
+            for event in events
+                tr
+                    td=event.name.text
+                    td=event.start.local
+                    td=event.end.local
