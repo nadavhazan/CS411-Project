@@ -8,7 +8,7 @@ block content
             i.fa.fa-building-o
                 | #{my_title}
 
-        h3 Search events in boston
+        h3 Search Events
 
         form.form-horizontal(method='POST')
             input(type='hidden', name='_csrf', value='')
@@ -26,12 +26,15 @@ block content
         thead
 
             tr
-                th Name
+                th Event Name
                 th start
                 th end
         tbody
             for event in events
                 tr
-                    td=event.name.text
+                    td
+                        a(href=event.url, target='_blank')
+                          | #{event.name.text}
                     td=event.start.local
                     td=event.end.local
+                        
